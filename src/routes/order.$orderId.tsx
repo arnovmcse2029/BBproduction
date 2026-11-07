@@ -51,14 +51,18 @@ function ConfirmationPage() {
     );
   }
 
-  const eta = new Date(new Date(order.createdAt).getTime() + settings.estimatedDeliveryMins * 60000);
+  const eta = new Date(
+    new Date(order.createdAt).getTime() + settings.estimatedDeliveryMins * 60000,
+  );
 
   return (
     <SiteLayout>
       <section className="bg-charcoal">
         <div className="container-page py-16 text-center">
           <CheckCircle2 className="mx-auto h-14 w-14 text-gold" />
-          <h1 className="mt-5 text-4xl font-semibold text-ivory md:text-5xl">Thank you, {order.customer.fullName.split(" ")[0]}!</h1>
+          <h1 className="mt-5 text-4xl font-semibold text-ivory md:text-5xl">
+            Thank you, {order.customer.fullName.split(" ")[0]}!
+          </h1>
           <p className="mt-3 text-ivory-muted">Your order has been received.</p>
           <button
             onClick={() => {
@@ -75,19 +79,25 @@ function ConfirmationPage() {
       <div className="container-page grid gap-6 py-12 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <DemoNotice>
-            This is a demo confirmation. The order is saved in this browser only and has not been sent to the
-            restaurant's kitchen yet.
+            This is a demo confirmation. The order is saved in this browser only and has not been
+            sent to the restaurant's kitchen yet.
           </DemoNotice>
           <Panel title="Items">
             <ul className="mb-5 space-y-3 border-b pb-5">
               {order.items.map((i) => (
                 <li key={i.productId} className="flex justify-between text-sm">
-                  <span><span className="font-semibold">{i.quantity}×</span> {i.name}</span>
+                  <span>
+                    <span className="font-semibold">{i.quantity}×</span> {i.name}
+                  </span>
                   <span className="tabular-nums">{formatINR(i.price * i.quantity)}</span>
                 </li>
               ))}
             </ul>
-            <SummaryRows subtotal={order.subtotal} deliveryFee={order.deliveryFee} total={order.total} />
+            <SummaryRows
+              subtotal={order.subtotal}
+              deliveryFee={order.deliveryFee}
+              total={order.total}
+            />
           </Panel>
         </div>
         <div className="space-y-6">
@@ -95,30 +105,45 @@ function ConfirmationPage() {
             <div className="flex items-center gap-3">
               <Clock className="h-5 w-5 text-gold" />
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Estimated delivery</p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Estimated delivery
+                </p>
                 <p className="font-semibold">
-                  Around {eta.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })} (estimate)
+                  Around {eta.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}{" "}
+                  (estimate)
                 </p>
               </div>
             </div>
             <div className="mt-5 flex items-center justify-between border-t pt-5 text-sm">
               <span className="text-muted-foreground">Payment</span>
-              <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${PAYMENT_TONE[order.paymentStatus]}`}>
+              <span
+                className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${PAYMENT_TONE[order.paymentStatus]}`}
+              >
                 {PAYMENT_LABEL[order.paymentStatus]}
               </span>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">Placed {formatDateTime(order.createdAt)}</p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Placed {formatDateTime(order.createdAt)}
+            </p>
           </Panel>
           <Panel title="Deliver to">
             <p className="font-semibold">{order.customer.fullName}</p>
             <p className="text-sm text-muted-foreground">{order.customer.phone}</p>
             <p className="mt-3 text-sm leading-relaxed">{order.address.fullAddress}</p>
-            {order.address.landmark && <p className="text-sm text-muted-foreground">Near {order.address.landmark}</p>}
-            {order.address.instructions && <p className="mt-2 text-sm italic text-muted-foreground">“{order.address.instructions}”</p>}
+            {order.address.landmark && (
+              <p className="text-sm text-muted-foreground">Near {order.address.landmark}</p>
+            )}
+            {order.address.instructions && (
+              <p className="mt-2 text-sm italic text-muted-foreground">
+                “{order.address.instructions}”
+              </p>
+            )}
           </Panel>
           <div className="flex flex-col gap-3">
             <Button asChild variant="gold" size="xl">
-              <Link to="/track" search={{ id: order.id }}>Track this order</Link>
+              <Link to="/track" search={{ id: order.id }}>
+                Track this order
+              </Link>
             </Button>
             <Button asChild variant="outline" size="xl">
               <Link to="/menu">Order something else</Link>

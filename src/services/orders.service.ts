@@ -1,4 +1,11 @@
-import type { Customer, DeliveryAddress, Order, OrderItem, OrderStatus, PaymentMethod } from "@/types";
+import type {
+  Customer,
+  DeliveryAddress,
+  Order,
+  OrderItem,
+  OrderStatus,
+  PaymentMethod,
+} from "@/types";
 import { http, isBackendConnected } from "./api";
 import { delay, mockDb } from "./mock-db";
 
@@ -9,6 +16,17 @@ export interface CreateOrderInput {
   subtotal: number;
   deliveryFee: number;
   total: number;
+  paymentMethod: PaymentMethod;
+}
+
+/**
+ * Authoritative payload sent to the backend.
+ * Client-calculated prices and totals are omitted; the backend computes them securely against MongoDB.
+ */
+export interface CreateOrderPayload {
+  customer: Customer;
+  address: DeliveryAddress;
+  items: { productId: string; quantity: number }[];
   paymentMethod: PaymentMethod;
 }
 
@@ -32,7 +50,18 @@ export const ordersService = {
     return mockDb.getOrders().find((o) => o.id.toLowerCase() === id.toLowerCase());
   },
   async create(input: CreateOrderInput): Promise<Order> {
-    if (isBackendConnected) return http<Order>("/orders", { method: "POST", body: JSON.stringify(input) });
+    if (isBackendConnected) {
+      // Security: Transmit only product IDs and quantities. The backend server verifies inventory,
+      // fetches authoritative prices from MongoDB, calculates the subtotal, applies delivery fee rules,
+      // and returns the created order.
+      const payload: CreateOrderPayload = {
+        customer: input.customer,
+        address: input.address,
+        items: input.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+        paymentMethod: input.paymentMethod,
+      };
+      return http<Order>("/orders", { method: "POST", body: JSON.stringify(payload) });
+    }
     await delay(400);
     const order: Order = {
       ...input,

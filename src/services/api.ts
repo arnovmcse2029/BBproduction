@@ -5,7 +5,8 @@
  * service from local demo data to the real backend. Never put database
  * credentials or Razorpay secret keys in frontend code.
  */
-export const API_BASE_URL: string = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? "";
+export const API_BASE_URL: string =
+  (import.meta.env["VITE_API_BASE_URL"] as string | undefined) ?? "";
 
 export const isBackendConnected = API_BASE_URL.length > 0;
 
@@ -19,7 +20,8 @@ export class ApiError extends Error {
 }
 
 export async function http<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const token = typeof window !== "undefined" ? window.sessionStorage.getItem("bb_admin_token") : null;
+  const token =
+    typeof window !== "undefined" ? window.sessionStorage.getItem("bb_admin_token") : null;
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {

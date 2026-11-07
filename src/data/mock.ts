@@ -1,4 +1,4 @@
-import type { Order, Product, ProductCategory, RestaurantSettings } from "@/types";
+import type { Order, OrderStatus, Product, ProductCategory, RestaurantSettings } from "@/types";
 import { images } from "./images";
 
 export const CATEGORIES: { id: ProductCategory | "all"; label: string }[] = [
@@ -66,6 +66,7 @@ export const SEED_PRODUCTS: Product[] = [
       "Tender goat meat slow-cooked until it falls off the bone, layered with fragrant rice, potato and egg. Mild, aromatic and deeply satisfying.",
     price: 349,
     category: "mutton-biriyani",
+    image: images.muttonBiriyani,
     isVeg: false,
     isAvailable: true,
     isBestseller: true,
@@ -77,6 +78,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: "Bone-in mutton sealed and slow-cooked on dum for a richer finish.",
     price: 379,
     category: "mutton-biriyani",
+    image: images.lucknowiBiriyani,
     isVeg: false,
     isAvailable: false,
     isBestseller: false,
@@ -90,6 +92,7 @@ export const SEED_PRODUCTS: Product[] = [
       "The perfect partner to biriyani. Chicken slow-cooked in a velvety gravy of poppy seed, cashew, yoghurt and ghee, with a gentle sweetness true to old Kolkata.",
     price: 199,
     category: "chicken-chaap",
+    image: images.chickenChaap,
     isVeg: false,
     isAvailable: true,
     isBestseller: true,
@@ -101,6 +104,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: "A delicate white curry of yoghurt, cashew and green chilli.",
     price: 229,
     category: "chicken-chaap",
+    image: images.chickenRezala,
     isVeg: false,
     isAvailable: true,
     isBestseller: false,
@@ -152,6 +156,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: "Fragrant biriyani rice with two masala-fried eggs and potato.",
     price: 179,
     category: "special",
+    image: images.lucknowiBiriyani,
     isVeg: false,
     isAvailable: true,
     isBestseller: false,
@@ -163,6 +168,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: "Chilled ground-rice pudding with cardamom and pistachio.",
     price: 79,
     category: "special",
+    image: images.firni,
     isVeg: true,
     isAvailable: true,
     isBestseller: false,
@@ -173,6 +179,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: "Thick, chilled yoghurt drink blended with ripe mango.",
     price: 89,
     category: "beverages",
+    image: images.mangoLassi,
     isVeg: true,
     isAvailable: true,
     isBestseller: false,
@@ -183,6 +190,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: "Spiced buttermilk with roasted cumin and mint.",
     price: 59,
     category: "beverages",
+    image: images.masalaChaas,
     isVeg: true,
     isAvailable: true,
     isBestseller: false,
@@ -200,15 +208,9 @@ export const SEED_SETTINGS: RestaurantSettings = {
   phone: "",
   email: "",
   address: "",
-  hours: [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ].map((day) => ({ day, open: "11:30", close: "23:00", closed: false })),
+  hours: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(
+    (day) => ({ day, open: "11:30", close: "23:00", closed: false }),
+  ),
   offers: [
     {
       id: "offer-combo",
@@ -266,6 +268,7 @@ export function buildSeedOrders(now = new Date()): Order[] {
   picks.forEach((idxs, i) => {
     const items = idxs.map((pi, j) => {
       const p = SEED_PRODUCTS[pi];
+      if (!p) throw new Error(`Invalid seed index ${pi}`);
       return { productId: p.id, name: p.name, price: p.price, quantity: j === 0 ? 1 + (i % 2) : 1 };
     });
     const subtotal = items.reduce((s, it) => s + it.price * it.quantity, 0);
@@ -273,17 +276,22 @@ export function buildSeedOrders(now = new Date()): Order[] {
     const created = new Date(now);
     created.setDate(created.getDate() - Math.floor(i / 2));
     created.setHours(12 + (i % 9), (i * 17) % 60, 0, 0);
-    const [fullName, phone] = DEMO_NAMES[i % DEMO_NAMES.length];
-    const status = i < 2 ? (i === 0 ? "received" : "preparing") : STATUS_CYCLE[i % STATUS_CYCLE.length];
+    const demoEntry = DEMO_NAMES[i % DEMO_NAMES.length];
+    const fullName = demoEntry?.[0] ?? "Customer";
+    const phone = demoEntry?.[1] ?? "98300 00000";
+    const status: OrderStatus =
+      (i < 2 ? (i === 0 ? "received" : "preparing") : STATUS_CYCLE[i % STATUS_CYCLE.length]) ??
+      "received";
     const method = i % 3 === 0 ? "online" : "cod";
+    const area = ["Park Circus", "Salt Lake", "Gariahat", "New Town"][i % 4] ?? "Park Circus";
     orders.push({
       id: `BB-DEMO-${String(1001 + i)}`,
       customer: { fullName, phone: `+91 ${phone}` },
       address: {
         house: `${12 + i}B`,
         street: "Sample Street",
-        area: ["Park Circus", "Salt Lake", "Gariahat", "New Town"][i % 4],
-        fullAddress: `${12 + i}B, Sample Street, ${["Park Circus", "Salt Lake", "Gariahat", "New Town"][i % 4]}, Kolkata`,
+        area,
+        fullAddress: `${12 + i}B, Sample Street, ${area}, Kolkata`,
       },
       items,
       subtotal,
@@ -291,7 +299,13 @@ export function buildSeedOrders(now = new Date()): Order[] {
       total: subtotal + deliveryFee,
       paymentMethod: method,
       paymentStatus:
-        status === "cancelled" ? "refunded" : method === "online" ? "paid" : status === "delivered" ? "paid" : "cod",
+        status === "cancelled"
+          ? "refunded"
+          : method === "online"
+            ? "paid"
+            : status === "delivered"
+              ? "paid"
+              : "cod",
       status,
       createdAt: created.toISOString(),
       isDemo: true,

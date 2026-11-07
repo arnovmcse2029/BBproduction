@@ -1,32 +1,27 @@
 // Shared domain types. These mirror the shape the future Node/Express + MongoDB API will return.
 
 export type ProductCategory =
-  | "chicken-biriyani"
-  | "mutton-biriyani"
-  | "chicken-chaap"
-  | "combos"
-  | "special"
-  | "beverages";
+  "chicken-biriyani" | "mutton-biriyani" | "chicken-chaap" | "combos" | "special" | "beverages";
 
 export interface Product {
   id: string;
   name: string;
   description: string;
-  longDescription?: string;
+  longDescription?: string | undefined;
   price: number; // INR
   category: ProductCategory;
-  image?: string; // URL; when missing an elegant placeholder is shown
+  image?: string | undefined; // URL; when missing an elegant placeholder is shown
   isVeg: boolean;
   isAvailable: boolean;
   isBestseller: boolean;
-  serves?: string;
+  serves?: string | undefined;
 }
 
 export interface CartItem {
   productId: string;
   name: string;
   price: number;
-  image?: string;
+  image?: string | undefined;
   isVeg: boolean;
   quantity: number;
 }
@@ -40,9 +35,9 @@ export interface DeliveryAddress {
   house: string;
   street: string;
   area: string;
-  landmark?: string;
+  landmark?: string | undefined;
   fullAddress: string;
-  instructions?: string;
+  instructions?: string | undefined;
 }
 
 export type PaymentMethod = "online" | "cod";
@@ -101,7 +96,7 @@ export interface Offer {
   id: string;
   title: string;
   description: string;
-  code?: string;
+  code?: string | undefined;
   active: boolean;
 }
 

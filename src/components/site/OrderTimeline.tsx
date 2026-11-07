@@ -18,14 +18,17 @@ export function OrderTimeline({ status }: { status: OrderStatus }) {
   return (
     <ol className="relative space-y-0">
       {ORDER_STATUSES.map((s, i) => {
-        const Icon = ICONS[i];
+        const Icon = ICONS[i] ?? Check;
         const done = i < current;
         const active = i === current;
         return (
           <li key={s} className="relative flex gap-4 pb-8 last:pb-0">
             {i < ORDER_STATUSES.length - 1 && (
               <span
-                className={cn("absolute left-5 top-10 h-[calc(100%-2.5rem)] w-0.5", done ? "bg-gold" : "bg-border")}
+                className={cn(
+                  "absolute left-5 top-10 h-[calc(100%-2.5rem)] w-0.5",
+                  done ? "bg-gold" : "bg-border",
+                )}
                 aria-hidden
               />
             )}
@@ -40,7 +43,9 @@ export function OrderTimeline({ status }: { status: OrderStatus }) {
               <Icon className="h-4 w-4" />
             </span>
             <div className="pt-2">
-              <p className={cn("font-semibold", !done && !active && "text-muted-foreground")}>{STATUS_LABEL[s]}</p>
+              <p className={cn("font-semibold", !done && !active && "text-muted-foreground")}>
+                {STATUS_LABEL[s]}
+              </p>
               {active && <p className="text-sm text-earth">Current status</p>}
             </div>
           </li>

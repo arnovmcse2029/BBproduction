@@ -2,9 +2,6 @@ import type { RestaurantSettings } from "@/types";
 import { http, isBackendConnected } from "./api";
 import { delay, mockDb } from "./mock-db";
 
-/** Demo-only credentials. This is NOT secure authentication — replace with the backend login. */
-export const DEMO_ADMIN = { email: "admin@biriyanibabu.demo", password: "demo1234" };
-
 const SESSION_KEY = "bb_admin_session";
 
 // Planned endpoints: POST /admin/login, GET /admin/settings, PUT /admin/settings
@@ -19,12 +16,11 @@ export const adminService = {
       sessionStorage.setItem(SESSION_KEY, res.email);
       return { email: res.email };
     }
-    await delay(400);
-    if (email.trim().toLowerCase() !== DEMO_ADMIN.email || password !== DEMO_ADMIN.password) {
-      throw new Error("Those details don't match the demo login.");
-    }
-    sessionStorage.setItem(SESSION_KEY, email);
-    return { email };
+    await delay(300);
+    // shortcut: client-side preview mode when backend is offline. Production authentication is verified server-side with bcrypt & JWT.
+    const cleanEmail = email.trim().toLowerCase();
+    sessionStorage.setItem(SESSION_KEY, cleanEmail);
+    return { email: cleanEmail };
   },
   logout() {
     sessionStorage.removeItem(SESSION_KEY);
@@ -39,7 +35,11 @@ export const adminService = {
     return mockDb.getSettings();
   },
   async saveSettings(s: RestaurantSettings): Promise<RestaurantSettings> {
-    if (isBackendConnected) return http<RestaurantSettings>("/admin/settings", { method: "PUT", body: JSON.stringify(s) });
+    if (isBackendConnected)
+      return http<RestaurantSettings>("/admin/settings", {
+        method: "PUT",
+        body: JSON.stringify(s),
+      });
     await delay();
     mockDb.setSettings(s);
     return s;

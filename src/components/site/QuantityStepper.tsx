@@ -24,11 +24,20 @@ export function QuantityStepper({
         aria-label="Decrease quantity"
         onClick={() => onChange(value - 1)}
         disabled={value <= min}
-        className={cn(btn, "flex items-center justify-center text-foreground transition-colors hover:text-gold disabled:opacity-40")}
+        className={cn(
+          btn,
+          "flex items-center justify-center text-foreground transition-colors hover:text-gold disabled:opacity-40",
+        )}
       >
         <Minus className="h-4 w-4" />
       </button>
-      <span className={cn("min-w-8 text-center font-semibold tabular-nums", size === "sm" ? "text-sm" : "text-base")} aria-live="polite">
+      <span
+        className={cn(
+          "min-w-8 text-center font-semibold tabular-nums",
+          size === "sm" ? "text-sm" : "text-base",
+        )}
+        aria-live="polite"
+      >
         {value}
       </span>
       <button
@@ -36,7 +45,10 @@ export function QuantityStepper({
         aria-label="Increase quantity"
         onClick={() => onChange(value + 1)}
         disabled={value >= max}
-        className={cn(btn, "flex items-center justify-center text-foreground transition-colors hover:text-gold disabled:opacity-40")}
+        className={cn(
+          btn,
+          "flex items-center justify-center text-foreground transition-colors hover:text-gold disabled:opacity-40",
+        )}
       >
         <Plus className="h-4 w-4" />
       </button>

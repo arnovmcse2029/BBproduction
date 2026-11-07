@@ -14,4 +14,25 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it("matches the admin dashboard at /admin", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+
+    expect(router.matchRoutes("/admin").at(-1)?.routeId).toBe("/admin/");
+  });
+
+  it.each([
+    ["/admin/orders", "/admin/orders"],
+    ["/admin/products", "/admin/products"],
+    ["/admin/customers", "/admin/customers"],
+    ["/admin/payments", "/admin/payments"],
+    ["/admin/offers", "/admin/offers"],
+    ["/admin/analytics", "/admin/analytics"],
+    ["/admin/settings", "/admin/settings"],
+  ])("matches the admin section %s", (path, routeId) => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    const matches = router.matchRoutes(path);
+
+    expect(matches.at(-1)?.routeId).toBe(routeId);
+  });
 });

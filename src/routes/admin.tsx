@@ -33,6 +33,7 @@ import {
 import { useStore } from "@/context/store";
 import { images } from "@/data/images";
 import { adminService } from "@/services/admin.service";
+import { isBackendConnected } from "@/services/api";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -80,9 +81,14 @@ function AdminLayout() {
         <SidebarInset className="bg-muted/40">
           <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-card/95 px-4 backdrop-blur">
             <SidebarTrigger />
-            <span className="rounded-full bg-gold/15 px-2.5 py-0.5 text-xs font-semibold text-earth">Demo data</span>
+            <span className="rounded-full bg-gold/15 px-2.5 py-0.5 text-xs font-semibold text-earth">
+              {isBackendConnected ? "Live Database" : "Demo Preview (Requires Backend Auth)"}
+            </span>
             <OpenStatus />
-            <Link to="/" className="ml-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              to="/"
+              className="ml-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+            >
               View website <ExternalLink className="h-3.5 w-3.5" />
             </Link>
           </header>
@@ -110,12 +116,17 @@ function AdminSidebar({ email, onLogout }: { email: string; onLogout: () => void
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const isActive = (to: string) => (to === "/admin" ? path === "/admin" || path === "/admin/" : path.startsWith(to));
+  const isActive = (to: string) =>
+    to === "/admin" ? path === "/admin" || path === "/admin/" : path.startsWith(to);
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="items-center py-4">
-        <img src={images.logo} alt="Biriyani Babu" className={collapsed ? "h-9 w-9 object-contain" : "h-20 w-auto"} />
+        <img
+          src={images.logo}
+          alt="Biriyani Babu"
+          className={collapsed ? "h-9 w-9 object-contain" : "h-20 w-auto"}
+        />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

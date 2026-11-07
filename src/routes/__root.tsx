@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/context/store";
 import { CartProvider } from "@/context/cart";
 import { Toaster } from "@/components/ui/sonner";
+import { FloatingCartBar } from "@/components/site/FloatingCartBar";
 
 function NotFoundComponent() {
   return (
@@ -85,7 +86,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Biriyani Babu — Authentic Biriyani & Chicken Chaap" },
       {
         name: "description",
-        content: "Order authentic Kolkata-style biriyani and Bengali Chicken Chaap from Biriyani Babu.",
+        content:
+          "Order authentic Kolkata-style biriyani and Bengali Chicken Chaap from Biriyani Babu.",
       },
       { name: "theme-color", content: "#171513" },
       { property: "og:site_name", content: "Biriyani Babu" },
@@ -97,7 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Karla:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display+SC:wght@400;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
@@ -133,6 +135,7 @@ function RootComponent() {
         <CartProvider>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
+          <FloatingCartBar />
           <Toaster position="top-center" />
         </CartProvider>
       </StoreProvider>

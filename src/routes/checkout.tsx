@@ -41,7 +41,10 @@ export const Route = createFileRoute("/checkout")({
       { title: "Checkout — Biriyani Babu" },
       { name: "description", content: "Enter your delivery details and choose a payment method." },
       { property: "og:title", content: "Checkout — Biriyani Babu" },
-      { property: "og:description", content: "Delivery details and payment for your Biriyani Babu order." },
+      {
+        property: "og:description",
+        content: "Delivery details and payment for your Biriyani Babu order.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -60,10 +63,10 @@ function Field({
 }: {
   id: string;
   label: string;
-  error?: string;
-  optional?: boolean;
+  error?: string | undefined;
+  optional?: boolean | undefined;
   children: React.ReactNode;
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <div className={className}>
@@ -123,7 +126,12 @@ function CheckoutPage() {
           fullAddress: v.fullAddress,
           instructions: v.instructions || undefined,
         },
-        items: cart.items.map((i) => ({ productId: i.productId, name: i.name, price: i.price, quantity: i.quantity })),
+        items: cart.items.map((i) => ({
+          productId: i.productId,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        })),
         subtotal: cart.subtotal,
         deliveryFee: cart.deliveryFee,
         total: cart.total,
@@ -140,18 +148,43 @@ function CheckoutPage() {
 
   return (
     <SiteLayout>
-      <PageHeader eyebrow="Checkout" title="Almost there" description="Tell us where to bring your biriyani." />
-      <form onSubmit={onSubmit} noValidate className="container-page grid gap-8 py-12 lg:grid-cols-3">
+      <PageHeader
+        eyebrow="Checkout"
+        title="Almost there"
+        description="Tell us where to bring your biriyani."
+      />
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className="container-page grid gap-8 py-12 lg:grid-cols-3"
+      >
         <div className="space-y-6 lg:col-span-2">
           <Panel title="Your details">
             <div className="grid gap-5 sm:grid-cols-2">
               <Field id="fullName" label="Full name" error={errors.fullName?.message}>
-                <Input id="fullName" autoComplete="name" className={inputCls(!!errors.fullName)} aria-invalid={!!errors.fullName} {...register("fullName")} />
+                <Input
+                  id="fullName"
+                  autoComplete="name"
+                  className={inputCls(!!errors.fullName)}
+                  aria-invalid={!!errors.fullName}
+                  {...register("fullName")}
+                />
               </Field>
               <Field id="phone" label="Mobile number" error={errors.phone?.message}>
                 <div className="flex">
-                  <span className="inline-flex h-11 items-center rounded-l-md border border-r-0 bg-muted px-3 text-sm text-muted-foreground">+91</span>
-                  <Input id="phone" type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="98XXXXXXXX" className={cn(inputCls(!!errors.phone), "rounded-l-none")} aria-invalid={!!errors.phone} {...register("phone")} />
+                  <span className="inline-flex h-11 items-center rounded-l-md border border-r-0 bg-muted px-3 text-sm text-muted-foreground">
+                    +91
+                  </span>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel-national"
+                    placeholder="98XXXXXXXX"
+                    className={cn(inputCls(!!errors.phone), "rounded-l-none")}
+                    aria-invalid={!!errors.phone}
+                    {...register("phone")}
+                  />
                 </div>
               </Field>
             </div>
@@ -171,17 +204,43 @@ function CheckoutPage() {
               <Field id="landmark" label="Landmark" optional error={errors.landmark?.message}>
                 <Input id="landmark" className={inputCls()} {...register("landmark")} />
               </Field>
-              <Field id="fullAddress" label="Complete delivery address" error={errors.fullAddress?.message} className="sm:col-span-2">
-                <Textarea id="fullAddress" rows={3} autoComplete="street-address" className={cn("bg-background", errors.fullAddress && "border-destructive")} {...register("fullAddress")} />
+              <Field
+                id="fullAddress"
+                label="Complete delivery address"
+                error={errors.fullAddress?.message}
+                className="sm:col-span-2"
+              >
+                <Textarea
+                  id="fullAddress"
+                  rows={3}
+                  autoComplete="street-address"
+                  className={cn("bg-background", errors.fullAddress && "border-destructive")}
+                  {...register("fullAddress")}
+                />
               </Field>
-              <Field id="instructions" label="Delivery instructions" optional className="sm:col-span-2">
-                <Textarea id="instructions" rows={2} placeholder="e.g. Ring the bell twice, leave at the gate" className="bg-background" {...register("instructions")} />
+              <Field
+                id="instructions"
+                label="Delivery instructions"
+                optional
+                className="sm:col-span-2"
+              >
+                <Textarea
+                  id="instructions"
+                  rows={2}
+                  placeholder="e.g. Ring the bell twice, leave at the gate"
+                  className="bg-background"
+                  {...register("instructions")}
+                />
               </Field>
             </div>
           </Panel>
 
           <Panel title="Payment method">
-            <div role="radiogroup" aria-label="Payment method" className="grid gap-3 sm:grid-cols-2">
+            <div
+              role="radiogroup"
+              aria-label="Payment method"
+              className="grid gap-3 sm:grid-cols-2"
+            >
               <PaymentOption
                 selected={method === "online"}
                 onSelect={() => setMethod("online")}
@@ -195,14 +254,16 @@ function CheckoutPage() {
                 disabled={!settings.codEnabled}
                 icon={<Banknote className="h-5 w-5" />}
                 title="Cash on Delivery"
-                text={settings.codEnabled ? "Pay when your food arrives" : "Not available right now"}
+                text={
+                  settings.codEnabled ? "Pay when your food arrives" : "Not available right now"
+                }
               />
             </div>
             {method === "online" && (
               <div className="mt-4">
                 <DemoNotice>
-                  Online payment isn't connected yet. Your order will be saved with payment <strong>pending</strong> —
-                  no money will be taken.
+                  Online payment isn't connected yet. Your order will be saved with payment{" "}
+                  <strong>pending</strong> — no money will be taken.
                 </DemoNotice>
               </div>
             )}
@@ -221,12 +282,19 @@ function CheckoutPage() {
             ))}
           </ul>
           <SummaryRows subtotal={cart.subtotal} deliveryFee={cart.deliveryFee} total={cart.total} />
-          <Button type="submit" variant="gold" size="xl" className="mt-6 w-full" disabled={isSubmitting || !settings.acceptingOrders || !settings.isOpen}>
+          <Button
+            type="submit"
+            variant="gold"
+            size="xl"
+            className="mt-6 w-full"
+            disabled={isSubmitting || !settings.acceptingOrders || !settings.isOpen}
+          >
             {isSubmitting ? <Loader2 className="animate-spin" /> : <Lock />}
             Place order · {formatINR(cart.total)}
           </Button>
           <p className="mt-3 text-center text-xs text-muted-foreground">
-            Demo checkout — orders are saved in this browser until the restaurant's system is connected.
+            Demo checkout — orders are saved in this browser until the restaurant's system is
+            connected.
           </p>
         </Panel>
       </form>
@@ -261,7 +329,9 @@ function PaymentOption({
         selected ? "border-gold bg-gold/10" : "border-border bg-background hover:border-gold/50",
       )}
     >
-      <span className={cn("mt-0.5", selected ? "text-earth" : "text-muted-foreground")}>{icon}</span>
+      <span className={cn("mt-0.5", selected ? "text-earth" : "text-muted-foreground")}>
+        {icon}
+      </span>
       <span>
         <span className="block font-semibold">{title}</span>
         <span className="block text-sm text-muted-foreground">{text}</span>

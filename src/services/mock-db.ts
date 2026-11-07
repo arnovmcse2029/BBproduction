@@ -32,7 +32,10 @@ export const mockDb = {
   setProducts: (p: Product[]) => write(KEYS.products, p),
   getOrders: () => read<Order[]>(KEYS.orders, () => buildSeedOrders()),
   setOrders: (o: Order[]) => write(KEYS.orders, o),
-  getSettings: () => ({ ...SEED_SETTINGS, ...read<RestaurantSettings>(KEYS.settings, () => SEED_SETTINGS) }),
+  getSettings: () => ({
+    ...SEED_SETTINGS,
+    ...read<RestaurantSettings>(KEYS.settings, () => SEED_SETTINGS),
+  }),
   setSettings: (s: RestaurantSettings) => write(KEYS.settings, s),
   reset: () => {
     Object.values(KEYS).forEach((k) => hasStorage() && window.localStorage.removeItem(k));

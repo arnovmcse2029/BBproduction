@@ -21,7 +21,9 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         </div>
       )}
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+        {children}
+      </main>
       <Footer />
 
       {itemCount > 0 && !hideBar && (
@@ -42,14 +44,33 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   );
 }
 
-export function PageHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description?: string }) {
+export function PageHeader({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+}) {
   return (
-    <section className="bg-charcoal">
-      <div className="container-page py-14 md:py-20">
-        <p className="eyebrow">{eyebrow}</p>
-        <h1 className="mt-3 text-4xl font-semibold text-ivory md:text-6xl">{title}</h1>
-        <span className="gold-rule mt-5" />
-        {description && <p className="mt-5 max-w-2xl text-ivory-muted">{description}</p>}
+    <section className="relative overflow-hidden bg-charcoal border-b border-gold/15">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold/15 via-charcoal/60 to-charcoal" />
+      <div className="container-page relative py-14 md:py-20">
+        <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1 text-[0.7rem] font-bold uppercase tracking-[0.22em] text-gold mb-2">
+          ✦ {eyebrow} ✦
+        </span>
+        <h1 className="mt-2 font-display text-4xl font-semibold text-ivory md:text-6xl">{title}</h1>
+        <div className="flex items-center gap-2 mt-4">
+          <span className="h-px w-10 bg-gold/60" />
+          <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
+          <span className="h-px w-10 bg-gold/60" />
+        </div>
+        {description && (
+          <p className="mt-4 max-w-2xl text-base md:text-lg text-ivory-muted leading-relaxed">
+            {description}
+          </p>
+        )}
       </div>
     </section>
   );

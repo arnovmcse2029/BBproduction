@@ -18,7 +18,9 @@ export function SummaryRows({
       </div>
       <div className="flex justify-between">
         <dt className="text-muted-foreground">Delivery fee</dt>
-        <dd className="font-medium tabular-nums">{deliveryFee === 0 ? "Free" : formatINR(deliveryFee)}</dd>
+        <dd className="font-medium tabular-nums">
+          {deliveryFee === 0 ? "Free" : formatINR(deliveryFee)}
+        </dd>
       </div>
       <div className="flex justify-between border-t pt-3 text-base">
         <dt className="font-semibold">Total payable</dt>
@@ -28,7 +30,15 @@ export function SummaryRows({
   );
 }
 
-export function Panel({ title, children, className }: { title?: string; children: ReactNode; className?: string }) {
+export function Panel({
+  title,
+  children,
+  className,
+}: {
+  title?: string;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
     <div className={`rounded-2xl border bg-card p-6 shadow-card ${className ?? ""}`}>
       {title && <h2 className="mb-5 text-xl font-semibold">{title}</h2>}

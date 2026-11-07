@@ -1,7 +1,9 @@
 import type { Order, Product } from "@/types";
 
 const sameDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
 export function orderStats(orders: Order[], now = new Date()) {
   const valid = orders.filter((o) => o.status !== "cancelled");
@@ -12,7 +14,9 @@ export function orderStats(orders: Order[], now = new Date()) {
     pending: orders.filter((o) => o.status !== "delivered" && o.status !== "cancelled").length,
     completed: orders.filter((o) => o.status === "delivered").length,
     cancelled: orders.filter((o) => o.status === "cancelled").length,
-    avgOrderValue: valid.length ? Math.round(valid.reduce((s, o) => s + o.total, 0) / valid.length) : 0,
+    avgOrderValue: valid.length
+      ? Math.round(valid.reduce((s, o) => s + o.total, 0) / valid.length)
+      : 0,
   };
 }
 
@@ -21,7 +25,9 @@ export function revenueByDay(orders: Order[], days = 7, now = new Date()) {
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(d.getDate() - i);
-    const dayOrders = orders.filter((o) => o.status !== "cancelled" && sameDay(new Date(o.createdAt), d));
+    const dayOrders = orders.filter(
+      (o) => o.status !== "cancelled" && sameDay(new Date(o.createdAt), d),
+    );
     out.push({
       day: d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric" }),
       revenue: dayOrders.reduce((s, o) => s + o.total, 0),
@@ -67,7 +73,14 @@ export function customersFromOrders(orders: Order[]) {
   >();
   orders.forEach((o) => {
     const key = o.customer.phone;
-    const cur = map.get(key) ?? { name: o.customer.fullName, phone: key, orders: 0, spent: 0, lastOrder: o.createdAt, area: o.address.area };
+    const cur = map.get(key) ?? {
+      name: o.customer.fullName,
+      phone: key,
+      orders: 0,
+      spent: 0,
+      lastOrder: o.createdAt,
+      area: o.address.area,
+    };
     cur.orders += 1;
     if (o.status !== "cancelled") cur.spent += o.total;
     if (o.createdAt > cur.lastOrder) cur.lastOrder = o.createdAt;

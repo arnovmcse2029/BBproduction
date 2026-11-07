@@ -12,11 +12,15 @@ import { formatDateTime, STATUS_LABEL } from "@/lib/order-status";
 import { formatINR } from "@/lib/pricing";
 
 export const Route = createFileRoute("/track")({
-  validateSearch: (s: Record<string, unknown>): { id?: string } => (typeof s.id === "string" ? { id: s.id } : {}),
+  validateSearch: (s: Record<string, unknown>): { id?: string } =>
+    typeof s["id"] === "string" ? { id: s["id"] } : {},
   head: () => ({
     meta: [
       { title: "Track Your Order — Biriyani Babu" },
-      { name: "description", content: "Follow your Biriyani Babu order from the kitchen to your door." },
+      {
+        name: "description",
+        content: "Follow your Biriyani Babu order from the kitchen to your door.",
+      },
       { property: "og:title", content: "Track Your Order — Biriyani Babu" },
       { property: "og:description", content: "Follow your order from the kitchen to your door." },
       { property: "og:type", content: "website" },
@@ -36,7 +40,11 @@ function TrackPage() {
 
   return (
     <SiteLayout>
-      <PageHeader eyebrow="Order Tracking" title="Where's my biriyani?" description="Enter the order reference from your confirmation." />
+      <PageHeader
+        eyebrow="Order Tracking"
+        title="Where's my biriyani?"
+        description="Enter the order reference from your confirmation."
+      />
       <div className="container-page max-w-4xl py-12">
         <form
           onSubmit={(e) => {
@@ -48,19 +56,28 @@ function TrackPage() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="e.g. BB-261105-AB12"
+            placeholder="Enter order reference (e.g. BB-DEMO-01)"
             aria-label="Order reference"
-            className="h-12 bg-card font-mono"
+            className="h-12 bg-card font-mono rounded-xl border-border/80 focus-visible:ring-gold"
           />
-          <Button type="submit" size="xl">
-            <Search /> Track
+          <Button
+            type="submit"
+            variant="gold"
+            size="xl"
+            className="rounded-xl font-semibold shadow-gold hover:shadow-gold-lg"
+          >
+            <Search className="h-4 w-4" /> Track Order
           </Button>
         </form>
         {sample && !id && (
           <p className="mt-3 text-sm text-muted-foreground">
             Want to see how it works?{" "}
-            <Link to="/track" search={{ id: sample.id }} className="font-medium text-earth underline">
-              View a sample order
+            <Link
+              to="/track"
+              search={{ id: sample.id }}
+              className="font-semibold text-gold-foreground underline"
+            >
+              View sample live tracking ({sample.id}) →
             </Link>
           </p>
         )}
@@ -69,11 +86,15 @@ function TrackPage() {
           {!id ? null : !ready ? (
             <LoadingState label="Looking up your order…" />
           ) : !order ? (
-            <EmptyState title="No order found" description={`We couldn't find an order with reference “${id}”.`} />
+            <EmptyState
+              title="No order found"
+              description={`We couldn't find an order with reference “${id}”.`}
+            />
           ) : (
             <div className="space-y-6">
               <DemoNotice>
-                Demo status only — live updates from the kitchen will appear here once the restaurant's system is connected.
+                Demo status only — live updates from the kitchen will appear here once the
+                restaurant's system is connected.
               </DemoNotice>
               <div className="grid gap-6 md:grid-cols-5">
                 <Panel className="md:col-span-3">
@@ -87,7 +108,9 @@ function TrackPage() {
                   <ul className="space-y-2 text-sm">
                     {order.items.map((i) => (
                       <li key={i.productId} className="flex justify-between gap-2">
-                        <span>{i.quantity}× {i.name}</span>
+                        <span>
+                          {i.quantity}× {i.name}
+                        </span>
                         <span className="tabular-nums">{formatINR(i.price * i.quantity)}</span>
                       </li>
                     ))}
@@ -96,7 +119,9 @@ function TrackPage() {
                     <span>Total</span>
                     <span>{formatINR(order.total)}</span>
                   </div>
-                  <p className="mt-4 text-xs text-muted-foreground">Placed {formatDateTime(order.createdAt)}</p>
+                  <p className="mt-4 text-xs text-muted-foreground">
+                    Placed {formatDateTime(order.createdAt)}
+                  </p>
                 </Panel>
               </div>
             </div>

@@ -10,8 +10,13 @@ export const productsService = {
     return mockDb.getProducts();
   },
   async create(input: Omit<Product, "id">): Promise<Product> {
-    if (isBackendConnected) return http<Product>("/products", { method: "POST", body: JSON.stringify(input) });
-    const base = input.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "item";
+    if (isBackendConnected)
+      return http<Product>("/products", { method: "POST", body: JSON.stringify(input) });
+    const base =
+      input.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "") || "item";
     const all = mockDb.getProducts();
     const id = all.some((p) => p.id === base) ? `${base}-${Date.now().toString(36)}` : base;
     const product = { ...input, id };
@@ -19,7 +24,8 @@ export const productsService = {
     return product;
   },
   async update(id: string, patch: Partial<Product>): Promise<Product> {
-    if (isBackendConnected) return http<Product>(`/products/${id}`, { method: "PUT", body: JSON.stringify(patch) });
+    if (isBackendConnected)
+      return http<Product>(`/products/${id}`, { method: "PUT", body: JSON.stringify(patch) });
     const all = mockDb.getProducts();
     const next = all.map((p) => (p.id === id ? { ...p, ...patch, id } : p));
     mockDb.setProducts(next);

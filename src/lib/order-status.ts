@@ -36,7 +36,13 @@ export const PAYMENT_TONE: Record<PaymentStatus, string> = {
   refunded: "bg-muted text-muted-foreground",
 };
 
-export const stepIndex = (s: OrderStatus) => ORDER_STATUSES.indexOf(s as (typeof ORDER_STATUSES)[number]);
+export const stepIndex = (s: OrderStatus) =>
+  ORDER_STATUSES.indexOf(s as (typeof ORDER_STATUSES)[number]);
 
 export const formatDateTime = (iso: string) =>
-  new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+  new Date(iso).toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });

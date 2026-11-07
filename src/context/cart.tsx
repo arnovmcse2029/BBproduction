@@ -68,7 +68,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setItems((prev) =>
           qty <= 0
             ? prev.filter((i) => i.productId !== productId)
-            : prev.map((i) => (i.productId === productId ? { ...i, quantity: Math.min(20, qty) } : i)),
+            : prev.map((i) =>
+                i.productId === productId ? { ...i, quantity: Math.min(20, qty) } : i,
+              ),
         ),
       remove: (productId) => setItems((prev) => prev.filter((i) => i.productId !== productId)),
       clear: () => setItems([]),
