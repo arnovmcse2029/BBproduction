@@ -10,11 +10,26 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+build/
+coverage/
+.vercel/
+.netlify/
+__pycache__/
+*.py[cod]
 .output
 .vinxi
 .tanstack/**
 .nitro
 *.local
+.env
+.env.*
+!.env.example
+!.env.supabase-local.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.p8
 
 # Wrangler / Cloudflare
 .wrangler/
